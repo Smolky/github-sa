@@ -1,0 +1,27 @@
+{
+    "name": "smolky/github-sa",
+
+    "autoload": {
+        "psr-4": {
+            "CoreOGraphy\\":"core/"
+        }
+    },
+    
+    "require": {
+        
+        "php": ">=5.5.0",
+        
+        "guzzlehttp/guzzle": "~6.0",
+        "altorouter/altorouter": "1.1.0",
+        "pimple/pimple": "~3.0",
+        "twig/twig": "~1.0",
+        "swiftmailer/swiftmailer": "5.4.6",
+        "abraham/twitteroauth": "^0.7.4",
+        
+        "symfony/debug": "3.*",
+        "zendframework/zend-diactoros": "*",
+        
+        "philipp15b/php-i18n": "*"
+        
+    }
+}
