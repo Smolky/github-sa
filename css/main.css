@@ -1,0 +1,55 @@
+h1 {
+    max-width: 60rem;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.pure-table {
+    margin: 1rem auto;
+}
+
+.pure-table thead th {
+    white-space: nowrap;
+}
+
+.pure-table tbody th {
+    text-align: left;
+}
+
+.pure-table tbody th:first-child + th {
+    white-space: nowrap;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.pure-table thead th:first-child + th ~ th {
+    text-align: right;
+}
+
+.pure-table tfoot th,
+.pure-table tfoot td {
+    background-color: #333 !important;
+    color: white;
+}
+
+.pure-table tfoot td,
+.pure-table tbody td {
+    font-family: monospace;
+    text-align: right;
+}
+
+.pure-table tbody td:last-child {
+    text-align: left;
+    font-weight: bold;
+}
+
+.buttons {
+    padding-top: 1rem;
+    text-align: center;
+}
+
+.table-wrapper {
+    max-width: 100%;
+    max-height: 85vh;
+    overflow-x: scroll;
+}

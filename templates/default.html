@@ -5,7 +5,7 @@
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <title>{% block title %}{% endblock %}</title>
+        <title>{% block title %}GitHub SA{% endblock %}</title>
         
         <!-- Favicon -->
         <link rel="shortcut icon" type="image/x-icon" href="{{ base_url }}favicon.ico" />
@@ -16,24 +16,18 @@
         
         
         <!-- Stylesheets -->
-        <link rel="stylesheet" href="css/vendor/foundation-grid.css">
-        <link rel="stylesheet" href="css/vendor/foundation-form.css">
-        <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="css/vendor/vex.css">
-        <link rel="stylesheet" href="css/vendor/vex-theme-plain.css">
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+        <link rel="stylesheet" href="css/main.css?v={{ version }}">
         {% block stylesheets %}{% endblock %}
     
     </head>
-    <body class="{% block bodyclass %}{% endblock %}">
+    <body class="{{ device.isMobile ? 'is-mobile' : 'is-dektop' }}">
         
         <!-- Main content -->
         {% block content %}{% endblock %}
 
+        
         <!-- Javascripts -->
-        <script src="js/vendor/jquery-1.12.0.min.js"></script>
-        <script src="js/vendor/vex.combined.min.js"></script>
-        <script>vex.defaultOptions.className = 'vex-theme-plain'</script>
-        <script src="js/plugins.js?v={{ version }}"></script>
         {% block javascripts %}{% endblock %}
 
     </body>

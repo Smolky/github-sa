@@ -1,0 +1,35 @@
+body {
+    background: #666; 
+}
+
+.login-page {
+    max-width: 360px;
+    padding: 8% 0 0;
+}
+
+.form {
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+.scrabble {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+}
+
+.classifier tbody td:first-child + td {
+    padding-left: 1.75rem;
+}
+
+.classifier tbody td:first-child + td:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1rem;
+    bottom: 0;
+}
+
+.classifier tbody td:first-child + td + td {
+    background-color: #999;
+}
