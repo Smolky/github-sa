@@ -3,7 +3,8 @@
 
     "autoload": {
         "psr-4": {
-            "CoreOGraphy\\":"core/"
+            "CoreOGraphy\\":"core/",
+            "GitHubSA\\":"custom/repositories"
         }
     },
     

@@ -4,16 +4,14 @@
 
 {% block content %}
     <div class="pure-g">
-        <div class="pure-u-1-1"><h1>Stats</h1></div>
+        <div class="pure-u-1-1"><h1>Github Repository statictics about PRs</h1></div>
     </div>
-    
-
-    
 
     <div class="table-wrapper">
         <table class="pure-table pure-table-striped">
             <thead>
                 <tr>
+                    <th>Link</th>
                     {% for key, attribute in response|first %} 
                         <th>{{ key }}</th>
                     {% endfor %}
@@ -22,6 +20,10 @@
             <tbody>
                 {% for pr in response %} 
                     <tr>
+                        <th>
+                            {{ pr['title'] }}
+                        </th>
+                    
                         {% for attribute in pr %} 
                             <td>
                                 {{ attribute }}

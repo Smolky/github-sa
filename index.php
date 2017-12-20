@@ -25,6 +25,7 @@ define ('BASE_URL', $base_url);
 define ('VERSION', 0.1);
 
 
+
 // Set the error level based on the stage
 if (PRODUCTION) {
     error_reporting(0);

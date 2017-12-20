@@ -64,6 +64,21 @@ To deploy this project, please, follow the next steps
 3. Modify ```config.php``` with your server settings and provide an *github access token*
 
 
+## How to run
+Once the application has been properly configured, you can achieve results this way
+```
+    http://my-local-server.com/github-sa/[:owner]/[:name]
+```
+
+where ```owner``` and ```vendor``` are the values to identify the repository. For example:
+```
+    http://my-local-server.com/github-sa/magento/magento2
+```
+
+will fetch the PRs from Magento2 repository.
+
+
+
 ## References
 [1]: https://octoverse.github.com/
 [2]: https://medium.com/@fagnerbrack/one-pull-request-one-concern-e84a27dfe9f1

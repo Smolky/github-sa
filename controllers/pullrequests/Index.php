@@ -1,159 +1,66 @@
 <?php
 
-use GuzzleHttp\Client;
+use GitHubSA\RepoPullRequests;
 
 
 /**
  * Index
  *
- * @package Core-o-Graphy
+ * @package GitHub SA
  */
 class Index extends CoreOGraphy\BaseController {
-
-    /** @var $_client GuzzleHttp\Client; */
-    protected $_client;
-
     
-    /**
-     * __construct
-     *
-     * @package Core-o-Graphy
-     */    
-    public function __construct () {
+    /* @var $owner String */
+    protected $owner = '';
     
-        $this->_client = new Client ([
-            'base_uri' => GITHUB_END_POINT,
-            'timeout'  => 20.0,
-            'headers' => ['Authorization' => 'Bearer ' . GITHUB_ACCESS_TOKEN]
-        ]);
-        
     
-        // Delate on parent 
-        parent::__construct ();
-    }
+    /* @var $user String */
+    protected $user = '';
     
     
     /**
      * handleRequest
      *
-     * @package Core-o-Graphy
+     * @package GitHub SA
+     */    
+    public function __construct ($owner, $user) {
+    
+        // Store private vars
+        $this->owner = $owner;
+        $this->user = $user;
+    
+    
+        // Delegate on parent
+        parent::__construct ();
+    }
+    
+    /**
+     * handleRequest
+     *
+     * @package GitHub SA
      */
     public function handleRequest () {
     
-        /* @var $paginated_fields Array */
-        $paginated_fields = [
-            'assignees', 'comments', 'commits', 
-            'labels', 'participants', 'reactions', 'thumbs_up', 
-            'thumbs_down', 'laughs', 'hoorays', 'reviews_requests', 'reviews',
-            'project_cards', 'favorites', 'confused'
-        ];
-        
-    
-        // Prepare the query to fetch
-        // @link http://graphql.org/learn/pagination/ 
-        $body = trim (preg_replace ('/\s\s+/', ' ', '{ "query": "
-            query { 
-                
-                repository(owner:\"magento\", name:\"magento2\") {
-                    name
-                    
-                    pullRequests(last:20) {
-                        totalCount
-                        edges {
-                            node {
-                                assignees {
-                                    totalCount
-                                }
-                                comments {
-                                    totalCount
-                                }
-                                commits {
-                                    totalCount
-                                }
-                                labels {
-                                    totalCount
-                                }
-                                participants {
-                                    totalCount
-                                }
-                                project_cards: projectCards {
-                                    totalCount
-                                }
-                                reactions: reactions {
-                                    totalCount
-                                }
-                                thumbs_up: reactions(content:THUMBS_UP) {
-                                    totalCount
-                                }
-                                thumbs_down: reactions(content:THUMBS_DOWN) {
-                                    totalCount
-                                }
-                                laughs: reactions(content:LAUGH) {
-                                    totalCount
-                                }
-                                hoorays: reactions(content:HOORAY) {
-                                    totalCount
-                                }
-                                favorites: reactions(content:HEART) {
-                                    totalCount
-                                }
-                                confused: reactions(content:CONFUSED) {
-                                    totalCount
-                                }
-                                reviews_requests: reviewRequests {
-                                    totalCount
-                                }
-                                reviews {
-                                    totalCount
-                                }
-                                
-                                mergeable 
-                                
-                                closed
-                                locked
-                                
-                                createdAt
-                                closedAt
-                                mergedAt
-                                
-                                additions
-                                changes: changedFiles
-                                
-                                merged
-                                
-                            }
-                            cursor
-                        }
-                        pageInfo {
-                            endCursor
-                            hasNextPage
-                        }
-                    }
-                }
-                
-            }
-        "}'));
+        // Get repo
+        $repo = new RepoPullRequests ();
 
         
-        // Run the query
-        $response = $this->_client->request ('POST', '', ['body' => $body]);
-        
-        
         // Parse the response
-        $body = json_decode ($response->getBody(), true);
-        
+        $body = $repo->getPullRequests ($this->owner, $this->user);
+
         
         // Normalize response
-        $body = $body['data']['repository']['pullRequests']['edges'];
         foreach ($body as & $edge) {
             
             // Normalize fields to the avoid deeps arrays
-            foreach ($paginated_fields as $field) {
-                $edge['node'][$field] = $edge['node'][$field]['totalCount'];
+            foreach ($edge['node'] as $key => $field) {
+                if (is_array ($field)) {
+                    $edge['node'][$key] = reset ($edge['node'][$key]);
+                }
             }
             
             
-            // Remove deep
+            // Remove a deep level
             $edge = $edge['node'];
             
             
@@ -164,7 +71,7 @@ class Index extends CoreOGraphy\BaseController {
             $edge['locked'] = $edge['locked'] == '1' ? 1 : 0;
             
             
-            // Create new fields
+            // Create new fields about time
             $date1 = new DateTime ($edge['createdAt']);
             $edge['days_opened'] = 0;
             if ($edge['closedAt']) {
@@ -173,6 +80,8 @@ class Index extends CoreOGraphy\BaseController {
                 $date2 = new DateTime ();
             }
             
+            
+            // Get the correct ID
             unset ($edge['createdAt']);
             unset ($edge['closedAt']);
             unset ($edge['mergedAt']);
@@ -183,7 +92,7 @@ class Index extends CoreOGraphy\BaseController {
             
         }
         
-        
+
 
         
         // Write body
