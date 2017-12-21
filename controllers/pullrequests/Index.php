@@ -14,8 +14,8 @@ class Index extends CoreOGraphy\BaseController {
     protected $owner = '';
     
     
-    /* @var $user String */
-    protected $user = '';
+    /* @var $repo String */
+    protected $repo = '';
     
     
     /**
@@ -23,16 +23,17 @@ class Index extends CoreOGraphy\BaseController {
      *
      * @package GitHub SA
      */    
-    public function __construct ($owner, $user) {
+    public function __construct ($owner, $repo) {
     
         // Store private vars
         $this->owner = $owner;
-        $this->user = $user;
+        $this->repo = $repo;
     
     
         // Delegate on parent
         parent::__construct ();
     }
+    
     
     /**
      * handleRequest
@@ -41,61 +42,62 @@ class Index extends CoreOGraphy\BaseController {
      */
     public function handleRequest () {
     
+        /* @var $pull_requests Array */
+        $pull_requests = [];
+        
+        
+        /* @var $base_github_url String */
+        $base_github_url = 'https://github.com/';
+        
+        
         // Get repo
         $repo = new RepoPullRequests ();
 
         
-        // Parse the response
-        $body = $repo->getPullRequests ($this->owner, $this->user);
+        // Init date to now
+        $now = new DateTime ();
 
         
         // Normalize response
-        foreach ($body as & $edge) {
+        foreach ($repo->getPullRequests ($this->owner, $this->repo) as $edge) {
             
-            // Normalize fields to the avoid deeps arrays
-            foreach ($edge['node'] as $key => $field) {
-                if (is_array ($field)) {
-                    $edge['node'][$key] = reset ($edge['node'][$key]);
-                }
-            }
-            
-            
-            // Remove a deep level
+            // Shortcut
             $edge = $edge['node'];
-            
-            
-            // Normalize to 1|0
-            $edge['mergeable'] = $edge['mergeable'] == 'MERGEABLE' ? 1 : 0;
-            $edge['closed'] = $edge['closed'] == '1' ? 1 : 0;
-            $edge['merged'] = $edge['merged'] == '1' ? 1 : 0;
-            $edge['locked'] = $edge['locked'] == '1' ? 1 : 0;
             
             
             // Create new fields about time
             $date1 = new DateTime ($edge['createdAt']);
-            $edge['days_opened'] = 0;
             if ($edge['closedAt']) {
                 $date2 = new DateTime ($edge['closedAt']);
             } else {
-                $date2 = new DateTime ();
+                $date2 = $now;
             }
             
             
-            // Get the correct ID
-            unset ($edge['createdAt']);
-            unset ($edge['closedAt']);
-            unset ($edge['mergedAt']);
+            
+            // Parse the response
+            $item = [
+                'mergeable' => $edge['mergeable'] == 'MERGEABLE' ? 1 : 0,
+                'closed' => $edge['closed'] == '1' ? 1 : 0,
+                'merged'=> $edge['merged'] == '1' ? 1 : 0,
+                'locked' => $edge['locked'] == '1' ? 1 : 0,
+                'days_opened' => $date2->diff ($date1)->format("%a")
+            ];
+            
+            // Normalize fields to the avoid deeps arrays
+            foreach ($edge as $key => $field) {
+                if (is_array ($field)) {
+                    $item[$key] = reset ($edge[$key]);
+                }
+            }
             
             
-            $edge['days_opened'] = $date2->diff ($date1)->format("%a");
-            
+            $pull_requests['<a target="_blank" href="' . $base_github_url . $edge['resourcePath'] . '">' . $edge['title'] . '</a>'] = $item; 
             
         }
-        
-
 
         
         // Write body
-        $this->_response->getBody ()->write ($this->_template->render ('pull-requests.html', ['response' => $body]));
+        $this->_response->getBody ()->write ($this->_template->render ('pull-requests.html', ['pull_requests' => $pull_requests]));
     }
 }

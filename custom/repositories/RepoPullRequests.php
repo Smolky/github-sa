@@ -34,27 +34,27 @@ Class RepoPullRequests {
      *
      * Fetches all the pullrequest
      *
-     * @param $owner String
-     * @param $name String
-     * @param $cursor String
+     * @param $owner String The owner of the repository
+     * @param $repo String The name of the the repository
+     * @param $cursor String An internal cursor for pagination purposes
+     * @param $total_iterations int  A internal counter to avoid endless loops
      *
      * @package Github SA
-     */      
-    public function getPullRequests ($owner, $name, $cursor='', $total_iterations=0) {
+     */
+    public function getPullRequests ($owner, $repo, $cursor='', $total_iterations=0) {
         
-        /* @var $results Array */
+        /* @var $results Array Temporal variable to store the results */
         $results = [];
         
         
-        // Check iterations
+        // Check iterations to avoid endless loops
         $total_iterations++;
         if ($total_iterations == 2) {
             return [];
         }
         
         
-        
-        /* @var $cursor_string String */
+        /* @var $cursor_string String Append the cursor por pagination */
         $cursor_string = $cursor == '' ? '' : (' after:\"' . $cursor. '\"');
         
         
@@ -62,7 +62,7 @@ Class RepoPullRequests {
         $query = '
             query { 
             
-                repository(owner:\"' . $owner . '\", name:\"' . $name . '\") {
+                repository(owner:\"' . $owner . '\", name:\"' . $repo . '\") {
                     name
                 
                     pullRequests(first:25 ' . $cursor_string . ') {
@@ -119,6 +119,7 @@ Class RepoPullRequests {
                                 title 
                                 
                                 mergeable 
+                                resourcePath
                                 
                                 closed
                                 locked
@@ -160,7 +161,7 @@ Class RepoPullRequests {
         // Fetch page info
         $pageinfo = $body['data']['repository']['pullRequests']['pageInfo'];
         if ($pageinfo['hasNextPage']) {
-            $results = array_merge ($results, $this->getPullRequests ($owner, $name, $pageinfo['endCursor'], $total_iterations));
+            $results = array_merge ($results, $this->getPullRequests ($owner, $repo, $pageinfo['endCursor'], $total_iterations));
         }
 
         

@@ -11,20 +11,20 @@
         <table class="pure-table pure-table-striped">
             <thead>
                 <tr>
-                    <th>Link</th>
-                    {% for key, attribute in response|first %} 
+                    <th>Title</th>
+                    {% for key, attribute in pull_requests|first %} 
                         <th>{{ key }}</th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for pr in response %} 
+                {% for title, attributes in pull_requests %} 
                     <tr>
                         <th>
-                            {{ pr['title'] }}
+                            {{ title|raw }}
                         </th>
                     
-                        {% for attribute in pr %} 
+                        {% for attribute in attributes %} 
                             <td>
                                 {{ attribute }}
                             </td>
