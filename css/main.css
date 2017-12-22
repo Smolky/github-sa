@@ -16,7 +16,7 @@ h1 {
     text-align: left;
 }
 
-.pure-table tbody th:first-child + th {
+.pure-table tbody th:first-child {
     white-space: nowrap;
     font-weight: 400;
     font-style: italic;
@@ -26,13 +26,11 @@ h1 {
     text-align: right;
 }
 
-.pure-table tfoot th,
 .pure-table tfoot td {
     background-color: #333 !important;
     color: white;
 }
 
-.pure-table tfoot td,
 .pure-table tbody td {
     font-family: monospace;
     text-align: right;

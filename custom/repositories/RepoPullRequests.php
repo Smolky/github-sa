@@ -47,15 +47,15 @@ Class RepoPullRequests {
         $results = [];
         
         
-        // Check iterations to avoid endless loops
+        // Check iterations to avoid endless loop
         $total_iterations++;
-        if ($total_iterations == 2) {
+        if ($total_iterations == 6) {
             return [];
         }
         
         
         /* @var $cursor_string String Append the cursor por pagination */
-        $cursor_string = $cursor == '' ? '' : (' after:\"' . $cursor. '\"');
+        $cursor_string = $cursor == '' ? '' : (' before:\"' . $cursor. '\"');
         
         
         // Prepare the query
@@ -65,7 +65,7 @@ Class RepoPullRequests {
                 repository(owner:\"' . $owner . '\", name:\"' . $repo . '\") {
                     name
                 
-                    pullRequests(first:25 ' . $cursor_string . ') {
+                    pullRequests(last:2 ' . $cursor_string . ') {
                         totalCount
                         edges {
                             node {
@@ -138,8 +138,10 @@ Class RepoPullRequests {
                             cursor
                         }
                         pageInfo {
+                            startCursor
                             endCursor
                             hasNextPage
+                            hasPreviousPage
                         }
                     }
                 }
@@ -160,8 +162,8 @@ Class RepoPullRequests {
         
         // Fetch page info
         $pageinfo = $body['data']['repository']['pullRequests']['pageInfo'];
-        if ($pageinfo['hasNextPage']) {
-            $results = array_merge ($results, $this->getPullRequests ($owner, $repo, $pageinfo['endCursor'], $total_iterations));
+        if ($pageinfo['hasPreviousPage']) {
+            $results = array_merge ($results, $this->getPullRequests ($owner, $repo, $pageinfo['startCursor'], $total_iterations));
         }
 
         

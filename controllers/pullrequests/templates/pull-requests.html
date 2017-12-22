@@ -18,10 +18,10 @@
                 </tr>
             </thead>
             <tbody>
-                {% for title, attributes in pull_requests %} 
+                {% for attributes in pull_requests %} 
                     <tr>
                         <th>
-                            {{ title|raw }}
+                            {{ anchors[loop.index0]|raw }}
                         </th>
                     
                         {% for attribute in attributes %} 
